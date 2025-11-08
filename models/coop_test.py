@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-model = YOLO("best.pt")
+model = YOLO("pt_model/best.pt")
 
 results = model.predict(source="chicken.png", save=True)
 for result in results:
