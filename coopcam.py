@@ -7,9 +7,12 @@ app = Flask(__name__)
 url = "tcp://192.168.1.46:8554"
 cap = cv2.VideoCapture(url)
 
-model = YOLO("models/pt_model/best_2.pt")
+model = YOLO("models/pt_model/best.pt")
+model_2 = YOLO("models/pt_model/best_2.pt")
+model_3 = YOLO("models/pt_model/best_3.pt")
+model_4 = YOLO("models/pt_model/best_lessaccr.pt")
 
-def gen_frames():
+def gen_frames_model_1():
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -28,11 +31,81 @@ def gen_frames():
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+def gen_frames_model_2():
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Frame not received")
+            break
 
-@app.route('/')
+        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+        results = model_2(frame, verbose=False)
+        annotated_frame = results[0].plot()
+
+        ret, buffer = cv2.imencode('.jpg', annotated_frame)
+        if not ret:
+            continue
+        frame_bytes = buffer.tobytes()
+
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+def gen_frames_model_3():
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Frame not received")
+            break
+
+        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+        results = model_3(frame, verbose=False)
+        annotated_frame = results[0].plot()
+
+        ret, buffer = cv2.imencode('.jpg', annotated_frame)
+        if not ret:
+            continue
+        frame_bytes = buffer.tobytes()
+
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+def gen_frames_model_4():
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Frame not received")
+            break
+
+        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+        results = model_4(frame, verbose=False)
+        annotated_frame = results[0].plot()
+
+        ret, buffer = cv2.imencode('.jpg', annotated_frame)
+        if not ret:
+            continue
+        frame_bytes = buffer.tobytes()
+
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+
+@app.route('/model_1')
 def video_feed():
-    return Response(gen_frames(),
+    return Response(gen_frames_model_1(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/model_2')
+def model_2_feed():
+    return Response(gen_frames_model_2(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/model_3')
+def model_3_feed():
+    return Response(gen_frames_model_3(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/model_4')
+def model_4_feed():
+    return Response(gen_frames_model_4(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
 @app.route('/no_detect')
 def no_detect_feed():
     def gen_no_detect_frames():
