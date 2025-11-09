@@ -19,9 +19,9 @@ Since 2024, the US has been under a **bird flu epidemic**. In that time:
 - Massive losses for farmers across the country
 
 Unfortunately, current state-of-the-art tools for chicken health monitoring like **AgriStats** require:
-- ❌ Minimum production values that exceed virtually all small farms
-- ❌ Annual fees of **$25,000-$100,000**
-- ❌ This leaves **small farmers without the tools they need**
+- Minimum production values that exceed virtually all small farms
+- Annual fees of **$25,000-$100,000**
+- This leaves **small farmers without the tools they need**
 
 In fact, this monopoly is so extensive that AgriStats is being sued by the **Justice Department** for monopolistic behavior. Their client base controls over **90% of chicken sales in the US**, and the DOJ report alleges they "encouraged meat processors to raise prices and reduce supply."
 
