@@ -199,5 +199,34 @@ def chicken_coordinates():
     return {"coordinates": coordinates}, 200
 
 
+@app.route('/api/return_all_detections')
+def return_all_detections():
+    """Return all detections from the database"""
+    try:
+        # Initialize database if not already done
+        db.connect(reuse_if_open=True)
+        db.create_tables([Detection], safe=True)
+
+        # Query all detections, ordered by timestamp
+        detections = Detection.select().order_by(Detection.timestamp.desc())
+
+        # Convert to list of dictionaries
+        detections_list = []
+        for detection in detections:
+            detections_list.append({
+                'id': detection.id,
+                'timestamp': detection.timestamp.isoformat() if detection.timestamp else None,
+                'chicken_count': detection.chicken_count,
+                'location': detection.location
+            })
+
+        return {"detections": detections_list, "count": len(detections_list)}, 200
+    except Exception as e:
+        return {"error": str(e)}, 500
+    finally:
+        if not db.is_closed():
+            db.close()
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

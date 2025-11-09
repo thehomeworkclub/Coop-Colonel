@@ -13,7 +13,7 @@ app = Flask(__name__,
             static_url_path='')
 
 # Configuration
-COOPCAM_BASE_URL = os.getenv('COOPCAM_URL', 'http://localhost:5001')
+COOPCAM_API_URL = os.getenv('COOPCAM_API_URL', 'http://192.168.1.104:5000')
 CAMERA_RESOLUTION = {'width': 1280, 'height': 720}
 
 def get_vite_assets():
@@ -127,35 +127,28 @@ def get_videos():
     ]
     return jsonify(videos)
 
-@app.route('/api/stream/<model>')
-def stream_video(model):
-    """Proxy video stream from coopcam.py"""
-    stream_url = f"{COOPCAM_BASE_URL}/stream/{model}"
-
-    def generate():
-        try:
-            r = requests.get(stream_url, stream=True, timeout=10)
-            r.raise_for_status()
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk:
-                    yield chunk
-        except requests.exceptions.ConnectionError:
-            print(f"❌ Cannot connect to coopcam.py at {COOPCAM_BASE_URL}")
-            print(f"   Please start coopcam.py on port 5001")
-            # Return empty response - frontend will show error state
-            return
-        except Exception as e:
-            print(f"Stream error for {model}: {e}")
-            return
-
-    return Response(generate(),
-                   mimetype='multipart/x-mixed-replace; boundary=frame')
+# Camera stream is accessed directly at http://192.168.1.104:5000/no_detect
+# No proxy endpoint needed
 
 @app.route('/api/thumbnail/<video_id>')
 def get_thumbnail(video_id):
     """Get video thumbnail (mock endpoint)"""
     # In production, this would return actual video thumbnails
     return jsonify({'placeholder': True, 'video_id': video_id})
+
+@app.route('/api/detections')
+def get_detections():
+    """Proxy detections from coopcam.py database"""
+    try:
+        # Get data from coopcam.py API
+        detections_url = f'{COOPCAM_API_URL}/api/return_all_detections'
+        response = requests.get(detections_url, timeout=5)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except Exception as e:
+        print(f"Failed to fetch detections from {COOPCAM_API_URL}: {e}")
+        # Return empty data if coopcam.py is not available
+        return jsonify({'detections': [], 'count': 0, 'error': str(e)})
 
 # Serve React app
 @app.route('/<path:path>')
@@ -165,12 +158,12 @@ def serve_static(path):
 
 if __name__ == '__main__':
     print("\n" + "="*60)
-    print("🐔 Coop Camera Dashboard")
+    print("🐔 Coop Colonel Dashboard")
     print("="*60)
     print(f"📡 Dashboard: http://localhost:5000")
-    print(f"🎥 Looking for coopcam.py at: {COOPCAM_BASE_URL}")
-    print("\n⚠️  Make sure coopcam.py is running on port 5001!")
-    print("   If not, the camera stream will show 'Stream unavailable'")
+    print(f"🎥 Camera stream: http://192.168.1.104:5000/no_detect")
+    print(f"📊 Detection API: {COOPCAM_API_URL}/api/return_all_detections")
+    print(f"\n⚠️  Make sure coopcam.py is running at {COOPCAM_API_URL}!")
     print("="*60 + "\n")
 
     app.run(debug=True, host='0.0.0.0', port=5000)
