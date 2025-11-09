@@ -179,10 +179,22 @@ def chicken_coordinates():
     frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
     results = model_2(frame, verbose=False)
-    coordinates = [
-        {"x": result.boxes.xyxy[0][0], "y": result.boxes.xyxy[0][1]}
-        for result in results if result.boxes.cls == 0
-    ]
+    coordinates = []
+
+    # Convert tensor outputs to Python lists so they are JSON serializable
+    try:
+        boxes = results[0].boxes
+        xyxy_list = boxes.xyxy.tolist() if hasattr(boxes, "xyxy") else []
+        cls_list = boxes.cls.tolist() if hasattr(boxes, "cls") else []
+    except Exception:
+        xyxy_list = []
+        cls_list = []
+
+    for box, cls in zip(xyxy_list, cls_list):
+        if int(cls) == 0:  # class 0 is chicken
+            x = float(box[0])
+            y = float(box[1])
+            coordinates.append({"x": x, "y": y})
 
     return {"coordinates": coordinates}, 200
 
