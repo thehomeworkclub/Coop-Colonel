@@ -1,0 +1,14 @@
+[Unit]
+Description=Raspberry Pi Camera TCP Stream
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/camera-stream/camera_stream_tcp.sh
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target
