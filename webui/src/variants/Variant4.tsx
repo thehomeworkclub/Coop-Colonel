@@ -22,17 +22,17 @@ export function Variant4() {
         </div>
 
         {/* Tabbed content - 1 column */}
-        <div>
-          <Tabs defaultValue="stats" className="w-full">
+        <div className="flex flex-col">
+          <Tabs defaultValue="stats" className="w-full flex flex-col flex-1">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="stats">Statistics</TabsTrigger>
               <TabsTrigger value="videos">Videos</TabsTrigger>
             </TabsList>
-            <TabsContent value="stats" className="mt-6">
-              <StatsPanel />
+            <TabsContent value="stats" className="mt-6 flex-1">
+              <StatsPanel className="h-full" />
             </TabsContent>
-            <TabsContent value="videos" className="mt-6">
-              <VideoGallery />
+            <TabsContent value="videos" className="mt-6 flex-1">
+              <VideoGallery className="h-full" />
             </TabsContent>
           </Tabs>
         </div>

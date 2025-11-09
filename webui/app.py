@@ -130,20 +130,26 @@ def get_videos():
 @app.route('/api/stream/<model>')
 def stream_video(model):
     """Proxy video stream from coopcam.py"""
-    try:
-        # Forward request to coopcam streaming endpoint
-        stream_url = f"{COOPCAM_BASE_URL}/stream/{model}"
+    stream_url = f"{COOPCAM_BASE_URL}/stream/{model}"
 
-        def generate():
+    def generate():
+        try:
             r = requests.get(stream_url, stream=True, timeout=10)
+            r.raise_for_status()
             for chunk in r.iter_content(chunk_size=1024):
-                yield chunk
+                if chunk:
+                    yield chunk
+        except requests.exceptions.ConnectionError:
+            print(f"❌ Cannot connect to coopcam.py at {COOPCAM_BASE_URL}")
+            print(f"   Please start coopcam.py on port 5001")
+            # Return empty response - frontend will show error state
+            return
+        except Exception as e:
+            print(f"Stream error for {model}: {e}")
+            return
 
-        return Response(generate(),
-                       mimetype='multipart/x-mixed-replace; boundary=frame')
-    except Exception as e:
-        print(f"Stream error: {e}")
-        return jsonify({'error': 'Stream unavailable'}), 503
+    return Response(generate(),
+                   mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/api/thumbnail/<video_id>')
 def get_thumbnail(video_id):
@@ -158,4 +164,13 @@ def serve_static(path):
     return send_from_directory(app.static_folder, path)
 
 if __name__ == '__main__':
+    print("\n" + "="*60)
+    print("🐔 Coop Camera Dashboard")
+    print("="*60)
+    print(f"📡 Dashboard: http://localhost:5000")
+    print(f"🎥 Looking for coopcam.py at: {COOPCAM_BASE_URL}")
+    print("\n⚠️  Make sure coopcam.py is running on port 5001!")
+    print("   If not, the camera stream will show 'Stream unavailable'")
+    print("="*60 + "\n")
+
     app.run(debug=True, host='0.0.0.0', port=5000)

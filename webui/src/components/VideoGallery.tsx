@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
-import { Film, Play, Download, Trash2, Calendar } from 'lucide-react'
+import { Film, Play, Download, Trash2 } from 'lucide-react'
 
 interface Video {
   id: number
@@ -40,17 +40,15 @@ export function VideoGallery({ className = '', compact = false, limit }: VideoGa
 
   if (loading) {
     return (
-      <Card className={className}>
-        <CardHeader>
+      <Card className={`${className} flex flex-col h-full`}>
+        <CardHeader className="pb-3 flex-shrink-0">
           <CardTitle className="flex items-center gap-2">
             <Film className="h-5 w-5" />
             Recorded Videos
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-pulse text-slate-400">Loading videos...</div>
-          </div>
+        <CardContent className="p-4 flex-1 flex items-center justify-center">
+          <div className="animate-pulse text-muted-foreground text-sm">Loading videos...</div>
         </CardContent>
       </Card>
     )
@@ -59,13 +57,13 @@ export function VideoGallery({ className = '', compact = false, limit }: VideoGa
   if (compact) {
     return (
       <Card className={className}>
-        <CardHeader>
+        <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <Film className="h-4 w-4" />
             Recent Videos
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4">
           <div className="space-y-2">
             {videos.map((video) => (
               <div
@@ -74,7 +72,7 @@ export function VideoGallery({ className = '', compact = false, limit }: VideoGa
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{video.filename}</p>
-                  <p className="text-xs text-slate-400">{video.duration} • {video.size}</p>
+                  <p className="text-xs text-muted-foreground">{video.duration} • {video.size}</p>
                 </div>
                 <Button size="sm" variant="ghost" className="ml-2">
                   <Play className="h-4 w-4" />
@@ -88,55 +86,52 @@ export function VideoGallery({ className = '', compact = false, limit }: VideoGa
   }
 
   return (
-    <Card className={className}>
-      <CardHeader>
+    <Card className={`${className} flex flex-col h-full`}>
+      <CardHeader className="pb-3 flex-shrink-0">
         <CardTitle className="flex items-center gap-2">
           <Film className="h-5 w-5" />
           Recorded Videos
         </CardTitle>
         <CardDescription>Manage and playback recorded footage</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+      <CardContent className="p-4 flex-1 overflow-hidden">
+        <div className="space-y-2 h-full overflow-y-auto pr-2">
           {videos.length === 0 ? (
-            <div className="text-center py-8 text-slate-400">
-              <Film className="h-12 w-12 mx-auto mb-2 opacity-50" />
-              <p>No recordings available</p>
+            <div className="text-center py-6 text-muted-foreground">
+              <Film className="h-10 w-10 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">No recordings available</p>
             </div>
           ) : (
             videos.map((video) => (
               <div
                 key={video.id}
-                className="flex items-start gap-4 p-4 rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors group"
+                className="flex items-center gap-2 p-2 rounded border border-border bg-card hover:bg-accent/50 transition-colors group"
               >
                 {/* Thumbnail placeholder */}
-                <div className="w-32 h-20 bg-muted rounded flex items-center justify-center flex-shrink-0 border border-border">
-                  <Play className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
+                <div className="w-16 h-12 bg-muted rounded flex items-center justify-center flex-shrink-0">
+                  <Play className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
 
                 {/* Video info */}
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-sm mb-1 truncate">{video.filename}</h4>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {video.timestamp}
-                    </span>
+                  <h4 className="font-medium text-xs truncate">{video.filename}</h4>
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
+                    <span>{video.timestamp}</span>
+                    <span>•</span>
                     <span>{video.duration}</span>
-                    <span>{video.size}</span>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <Button size="sm" variant="ghost" title="Play">
-                    <Play className="h-4 w-4" />
+                <div className="flex items-center gap-0.5 flex-shrink-0">
+                  <Button size="sm" variant="ghost" title="Play" className="h-7 w-7 p-0">
+                    <Play className="h-3 w-3" />
                   </Button>
-                  <Button size="sm" variant="ghost" title="Download">
-                    <Download className="h-4 w-4" />
+                  <Button size="sm" variant="ghost" title="Download" className="h-7 w-7 p-0">
+                    <Download className="h-3 w-3" />
                   </Button>
-                  <Button size="sm" variant="ghost" title="Delete" className="text-red-500 hover:text-red-400">
-                    <Trash2 className="h-4 w-4" />
+                  <Button size="sm" variant="ghost" title="Delete" className="h-7 w-7 p-0 text-destructive hover:text-destructive/80">
+                    <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
               </div>
