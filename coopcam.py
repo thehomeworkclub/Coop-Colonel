@@ -194,10 +194,48 @@ def count_chickens():
             overlap = iou(box, region)
             if overlap >= 0.5:
                 chicken_count += 1
-
+    # Log to database
+    Detection.create(timestamp=datetime.now(), chicken_count=chicken_count, location="watering")
     return {"chicken_count": chicken_count}, 200
 
 
+@app.route('/api/chicken_count_feeding')
+def chicken_count_feeding():
+    ret, frame = cap.read()
+    if not ret:
+        return {"error": "Frame not received"}, 500
+
+    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    results = model_2(frame, verbose=False)
+
+    # Feeding hole region (red box)
+    region = (60, 180, 180, 420)
+
+    def iou(boxA, boxB):
+        xA = max(boxA[0], boxB[0])
+        yA = max(boxA[1], boxB[1])
+        xB = min(boxA[2], boxB[2])
+        yB = min(boxA[3], boxB[3])
+        interArea = max(0, xB - xA) * max(0, yB - yA)
+        boxAArea = (boxA[2] - boxA[0]) * (boxA[3] - boxA[1])
+        return interArea / boxAArea if boxAArea > 0 else 0
+
+    chicken_count = 0
+    try:
+        boxes = results[0].boxes
+        xyxy_list = boxes.xyxy.tolist() if hasattr(boxes, "xyxy") else []
+        cls_list = boxes.cls.tolist() if hasattr(boxes, "cls") else []
+    except Exception:
+        xyxy_list = []
+        cls_list = []
+
+    for box, cls in zip(xyxy_list, cls_list):
+        if int(cls) == 0:  # class 0 = chicken
+            overlap = iou(box, region)
+            if overlap >= 0.5:
+                chicken_count += 1
+    Detection.create(timestamp=datetime.now(), chicken_count=chicken_count, location="feeding")
+    return {"chicken_count": chicken_count}, 200
 
 # make a route that shows x and y coordinates of detected chickens in the frame.
 @app.route('/api/chicken_coordinates')
