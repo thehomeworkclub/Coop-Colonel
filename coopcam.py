@@ -3,13 +3,11 @@ from ultralytics import YOLO
 from flask import Flask, Response
 from db.db import Detection, db
 from datetime import datetime
-import threading
 
 app = Flask(__name__)
 
 url = "tcp://192.168.1.46:8554"
 cap = cv2.VideoCapture(url)
-cap_lock = threading.Lock()
 
 model = YOLO("models/pt_model/best.pt")
 model_2 = YOLO("models/pt_model/best_2.pt")
@@ -19,8 +17,7 @@ model_5 = YOLO("models/pt_model/best_vultr.pt")
 
 def gen_frames_model_1():
     while True:
-        with cap_lock:
-            ret, frame = cap.read()
+        ret, frame = cap.read()
         if not ret:
             print("Frame not received")
             break
@@ -39,8 +36,7 @@ def gen_frames_model_1():
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 def gen_frames_model_2():
     while True:
-        with cap_lock:
-            ret, frame = cap.read()
+        ret, frame = cap.read()
         if not ret:
             print("Frame not received")
             break
@@ -59,8 +55,7 @@ def gen_frames_model_2():
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 def gen_frames_model_3():
     while True:
-        with cap_lock:
-            ret, frame = cap.read()
+        ret, frame = cap.read()
         if not ret:
             print("Frame not received")
             break
@@ -78,8 +73,7 @@ def gen_frames_model_3():
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 def gen_frames_model_4():
     while True:
-        with cap_lock:
-            ret, frame = cap.read()
+        ret, frame = cap.read()
         if not ret:
             print("Frame not received")
             break
@@ -97,8 +91,7 @@ def gen_frames_model_4():
         
 def gen_frames_model_5():
     while True:
-        with cap_lock:
-            ret, frame = cap.read()
+        ret, frame = cap.read()
         if not ret:
             print("Frame not received")
             break
@@ -142,8 +135,7 @@ def model_5_feed():
 def no_detect_feed():
     def gen_no_detect_frames():
         while True:
-            with cap_lock:
-                ret, frame = cap.read()
+            ret, frame = cap.read()
             if not ret:
                 print("Frame not received")
                 break
@@ -163,8 +155,7 @@ def no_detect_feed():
 # make a route that uses model_2 to process the video feed, count how many chickens are in frame and log it every time it is called.
 @app.route('/api/count_chickens_water')
 def count_chickens():
-    with cap_lock:
-        ret, frame = cap.read()
+    ret, frame = cap.read()
     if not ret:
         return {"error": "Frame not received"}, 500
 
@@ -207,8 +198,7 @@ def count_chickens():
 
 @app.route('/api/count_chickens_feeding')
 def chicken_count_feeding():
-    with cap_lock:
-        ret, frame = cap.read()
+    ret, frame = cap.read()
     if not ret:
         return {"error": "Frame not received"}, 500
 
@@ -247,8 +237,7 @@ def chicken_count_feeding():
 # make a route that shows x and y coordinates of detected chickens in the frame.
 @app.route('/api/chicken_coordinates')
 def chicken_coordinates():
-    with cap_lock:
-        ret, frame = cap.read()
+    ret, frame = cap.read()
     if not ret:
         return {"error": "Frame not received"}, 500
 
@@ -286,22 +275,5 @@ def return_all_detections():
         })
     return {"detections": detections}, 200
 
-@app.teardown_appcontext
-def cleanup_cap(error):
-    """Clean up resources on app teardown"""
-    try:
-        if cap and cap.isOpened():
-            cap.release()
-    except:
-        pass
-
 if __name__ == '__main__':
-    try:
-        app.run(host='0.0.0.0', port=5000)
-    finally:
-        # Ensure cleanup on exit
-        try:
-            if cap and cap.isOpened():
-                cap.release()
-        except:
-            pass
+    app.run(host='0.0.0.0', port=5000)
