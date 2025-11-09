@@ -12,7 +12,8 @@ export function CameraViewer({ className = '', showTitle = true }: CameraViewerP
   const [hasError, setHasError] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
-  const streamUrl = 'http://192.168.1.104:5000/no_detect'
+  // Use proxied stream to prevent too many direct connections to camera
+  const streamUrl = '/api/camera/stream'
 
   const handleImageLoad = () => {
     setIsLoading(false)
@@ -83,7 +84,7 @@ export function CameraViewer({ className = '', showTitle = true }: CameraViewerP
               <div className="text-center">
                 <VideoOff className="h-12 w-12 mx-auto mb-2 text-destructive" />
                 <p className="text-sm text-muted-foreground">Stream unavailable</p>
-                <p className="text-xs text-muted-foreground/70 mt-1">Check camera connection at {streamUrl}</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">Check camera connection</p>
               </div>
             </div>
           )}
