@@ -155,7 +155,7 @@ def no_detect_feed():
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # make a route that uses model_2 to process the video feed, count how many chickens are in frame and log it every time it is called.
-app.route('/api/count_chickens')
+@app.route('/api/count_chickens')
 def count_chickens():
     ret, frame = cap.read()
     if not ret:
