@@ -153,5 +153,23 @@ def no_detect_feed():
 
     return Response(gen_no_detect_frames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# make a route that uses model_2 to process the video feed, count how many chickens are in frame and log it every time it is called.
+app.route('/api/count_chickens')
+def count_chickens():
+    ret, frame = cap.read()
+    if not ret:
+        return {"error": "Frame not received"}, 500
+
+    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+    results = model_2(frame, verbose=False)
+    chicken_count = sum(1 for result in results if result.boxes.cls == 0)  # Assuming class 0 is chicken
+
+    # Log the count (for simplicity, just print it here)
+    print(f"Chickens detected: {chicken_count}")
+
+    return {"chicken_count": chicken_count}, 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
