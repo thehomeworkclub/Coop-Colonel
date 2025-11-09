@@ -199,7 +199,7 @@ def count_chickens():
     return {"chicken_count": chicken_count}, 200
 
 
-@app.route('/api/chicken_count_feeding')
+@app.route('/api/count_chickens_feeding')
 def chicken_count_feeding():
     ret, frame = cap.read()
     if not ret:
