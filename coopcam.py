@@ -266,6 +266,18 @@ def chicken_coordinates():
 
     return {"coordinates": coordinates}, 200
 
+@app.route("/api/return_all_detections")
+def return_all_detections():
+    detections = []
+    query = Detection.select().order_by(Detection.timestamp.desc())
+    for det in query:
+        detections.append({
+            "id": det.id,
+            "timestamp": det.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            "chicken_count": det.chicken_count,
+            "location": det.location
+        })
+    return {"detections": detections}, 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
