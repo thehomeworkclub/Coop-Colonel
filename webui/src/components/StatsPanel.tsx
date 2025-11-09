@@ -147,21 +147,21 @@ export function StatsPanel({ className = '', compact = false }: StatsPanelProps)
         {/* Detections */}
         <div>
           <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-blue-500" />
+            <TrendingUp className="h-4 w-4 text-primary" />
             Detections
           </h3>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <p className="text-xs text-slate-400">Today</p>
-              <p className="text-2xl font-bold text-blue-500">{stats.detections.today}</p>
+              <p className="text-xs text-muted-foreground">Today</p>
+              <p className="text-2xl font-bold text-primary">{stats.detections.today}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400">This Week</p>
-              <p className="text-2xl font-bold text-blue-500">{stats.detections.this_week}</p>
+              <p className="text-xs text-muted-foreground">This Week</p>
+              <p className="text-2xl font-bold text-primary">{stats.detections.this_week}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400">This Month</p>
-              <p className="text-2xl font-bold text-blue-500">{stats.detections.this_month}</p>
+              <p className="text-xs text-muted-foreground">This Month</p>
+              <p className="text-2xl font-bold text-primary">{stats.detections.this_month}</p>
             </div>
           </div>
         </div>

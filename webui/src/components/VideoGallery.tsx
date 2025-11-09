@@ -110,14 +110,14 @@ export function VideoGallery({ className = '', compact = false, limit }: VideoGa
                 className="flex items-start gap-4 p-4 rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors group"
               >
                 {/* Thumbnail placeholder */}
-                <div className="w-32 h-20 bg-slate-800 rounded flex items-center justify-center flex-shrink-0">
-                  <Play className="h-8 w-8 text-slate-600 group-hover:text-blue-500 transition-colors" />
+                <div className="w-32 h-20 bg-muted rounded flex items-center justify-center flex-shrink-0 border border-border">
+                  <Play className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
 
                 {/* Video info */}
                 <div className="flex-1 min-w-0">
                   <h4 className="font-medium text-sm mb-1 truncate">{video.filename}</h4>
-                  <div className="flex items-center gap-3 text-xs text-slate-400">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {video.timestamp}

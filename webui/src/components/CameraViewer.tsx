@@ -61,21 +61,21 @@ export function CameraViewer({ className = '', showModelSelector = true, showTit
         </CardHeader>
       )}
       <CardContent className={showTitle ? '' : 'p-0'}>
-        <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9', width: '100%', maxWidth: '1280px' }}>
+        <div className="relative bg-muted rounded-lg overflow-hidden border border-border" style={{ aspectRatio: '16/9', width: '100%', maxWidth: '1280px' }}>
           {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
+            <div className="absolute inset-0 flex items-center justify-center bg-card">
               <div className="text-center">
-                <Video className="h-12 w-12 mx-auto mb-2 animate-pulse text-blue-500" />
-                <p className="text-sm text-slate-400">Loading stream...</p>
+                <Video className="h-12 w-12 mx-auto mb-2 animate-pulse text-primary" />
+                <p className="text-sm text-muted-foreground">Loading stream...</p>
               </div>
             </div>
           )}
           {hasError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
+            <div className="absolute inset-0 flex items-center justify-center bg-card">
               <div className="text-center">
-                <VideoOff className="h-12 w-12 mx-auto mb-2 text-red-500" />
-                <p className="text-sm text-slate-400">Stream unavailable</p>
-                <p className="text-xs text-slate-500 mt-1">Make sure coopcam.py is running</p>
+                <VideoOff className="h-12 w-12 mx-auto mb-2 text-destructive" />
+                <p className="text-sm text-muted-foreground">Stream unavailable</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">Make sure coopcam.py is running</p>
               </div>
             </div>
           )}
