@@ -1,6 +1,8 @@
 import cv2
 from ultralytics import YOLO
 from flask import Flask, Response
+from db.db import Detection, db
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -166,10 +168,24 @@ def count_chickens():
     results = model_2(frame, verbose=False)
     chicken_count = sum(1 for result in results if result.boxes.cls == 0)  # Assuming class 0 is chicken
 
-    # Log the count (for simplicity, just print it here)
-    print(f"Chickens detected: {chicken_count}")
 
-    return {"chicken_count": chicken_count}, 200
+# make a route that shows x and y coordinates of detected chickens in the frame.
+@app.route('/api/chicken_coordinates')
+def chicken_coordinates():
+    ret, frame = cap.read()
+    if not ret:
+        return {"error": "Frame not received"}, 500
+
+    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+    results = model_2(frame, verbose=False)
+    coordinates = [
+        {"x": result.boxes.xyxy[0][0], "y": result.boxes.xyxy[0][1]}
+        for result in results if result.boxes.cls == 0
+    ]
+
+    return {"coordinates": coordinates}, 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
