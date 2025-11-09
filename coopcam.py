@@ -22,6 +22,8 @@ def gen_frames_model_1():
             print("Frame not received")
             break
 
+        frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
+
         results = model(frame, verbose=False)
         annotated_frame = results[0].plot()
 
@@ -39,6 +41,8 @@ def gen_frames_model_2():
             print("Frame not received")
             break
 
+        frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
+
         results = model_2(frame, verbose=False)
         annotated_frame = results[0].plot()
 
@@ -55,6 +59,7 @@ def gen_frames_model_3():
         if not ret:
             print("Frame not received")
             break
+        frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
 
         results = model_3(frame, verbose=False)
         annotated_frame = results[0].plot()
@@ -72,7 +77,7 @@ def gen_frames_model_4():
         if not ret:
             print("Frame not received")
             break
-
+        frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
         results = model_4(frame, verbose=False)
         annotated_frame = results[0].plot()
 
@@ -90,6 +95,8 @@ def gen_frames_model_5():
         if not ret:
             print("Frame not received")
             break
+
+        frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
 
         results = model_5(frame, verbose=False)
         annotated_frame = results[0].plot()
@@ -132,11 +139,12 @@ def no_detect_feed():
             if not ret:
                 print("Frame not received")
                 break
-
+            frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
             ret, buffer = cv2.imencode('.jpg', frame)
             if not ret:
                 continue
             frame_bytes = buffer.tobytes()
+
 
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
@@ -151,6 +159,8 @@ def count_chickens():
     if not ret:
         return {"error": "Frame not received"}, 500
 
+
+    frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
     results = model_2(frame, verbose=False)
 
     # Define target bounding region (example from your image)
@@ -192,6 +202,7 @@ def chicken_count_feeding():
     if not ret:
         return {"error": "Frame not received"}, 500
 
+    frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
     results = model_2(frame, verbose=False)
 
     # Feeding hole region (red box)
@@ -230,6 +241,7 @@ def chicken_coordinates():
     if not ret:
         return {"error": "Frame not received"}, 500
 
+    frame = cv2.rotate(frame, cv2.ROTATE_180_CLOCKWISE)
     results = model_2(frame, verbose=False)
     coordinates = []
 
