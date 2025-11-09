@@ -7,7 +7,7 @@ app = Flask(__name__)
 url = "tcp://192.168.1.46:8554"
 cap = cv2.VideoCapture(url)
 
-model = YOLO("models/pt_model/best.pt")
+model = YOLO("models/pt_model/best_2.pt")
 
 def gen_frames():
     while True:
