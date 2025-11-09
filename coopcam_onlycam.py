@@ -62,7 +62,7 @@ def video_feed():
 if __name__ == "__main__":
     start_capture()  # Start capture when server starts
     try:
-        app.run(host='0.0.0.0', port=5001, threaded=True)
+        app.run(host='0.0.0.0', port=5002, threaded=True)
     finally:
         stop_capture = True
         if capture_thread:
