@@ -11,12 +11,6 @@ url = "tcp://192.168.1.46:8554"
 cap = cv2.VideoCapture(url)
 cap_lock = threading.Lock()
 
-# Set buffer size to prevent frame accumulation
-cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-
-if not cap.isOpened():
-    print(f"Warning: Could not open video stream from {url}")
-
 model = YOLO("models/pt_model/best.pt")
 model_2 = YOLO("models/pt_model/best_2.pt")
 model_3 = YOLO("models/pt_model/best_3.pt")
