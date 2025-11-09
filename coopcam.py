@@ -33,6 +33,26 @@ def gen_frames():
 def video_feed():
     return Response(gen_frames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/no_detect')
+def no_detect_feed():
+    def gen_no_detect_frames():
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print("Frame not received")
+                break
 
+            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+            ret, buffer = cv2.imencode('.jpg', frame)
+            if not ret:
+                continue
+            frame_bytes = buffer.tobytes()
+
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+
+    return Response(gen_no_detect_frames(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
